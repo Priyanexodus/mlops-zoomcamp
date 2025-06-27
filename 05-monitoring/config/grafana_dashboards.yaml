@@ -1,0 +1,24 @@
+apiVersion: 1
+
+providers:
+  # <string> an unique provider name. Required
+  — name: 'PD Dashboard'
+  # <int> Org id. Default to I
+  orgld: 1
+  # <string> name of the dashboard folder.
+  folder: ''
+  # <string> folder UID. will be automatically generated if not specified
+  folderUid: ''
+  # <string> provider type. Default to 'file'
+  type: file
+  # <boot> disable dashboard deletion
+  disableDeletion: false
+  # <int> how often Graf ana will scan for changed dashboards
+  updateIntervalSeconds: 10
+  # allow updating provisioned dashboards
+  attowUiUpdates: false
+  options:
+    # <string, required> path to dashboard files
+    path: /opt/grafana/dashboards
+    # <bool> use folder names from filesystem to create folders in grafana
+    foldersFromFilesStructure: true
