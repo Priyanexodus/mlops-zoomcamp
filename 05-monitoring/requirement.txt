@@ -8,5 +8,6 @@ psycopg_binary
 evidently
 pandas
 numpy
+matplotlib
 scikit-learn
 jupyter

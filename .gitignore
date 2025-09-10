@@ -178,3 +178,10 @@ Anaconda3-2022.05-Linux-x86_64.sh
 
 # Ignore data files
 *.parquet
+
+# Ignore database files
+*.db
+
+# Ignore specific README files
+04-deployment/streaming/README.md
+06-best-practices/code/README.md
