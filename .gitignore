@@ -172,3 +172,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Ignore large files
+Anaconda3-2022.05-Linux-x86_64.sh
+
+# Ignore data files
+*.parquet
