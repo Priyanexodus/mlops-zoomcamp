@@ -19,6 +19,8 @@ pytest = "*"
 deepdiff = "*"
 awscli-local = "*"
 pylint = "*"
+black = "*"
+isort = "*"
 
 [requires]
 python_version = "3.10"
