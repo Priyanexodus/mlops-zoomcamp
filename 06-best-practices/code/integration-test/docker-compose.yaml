@@ -1,0 +1,27 @@
+services:
+ kinesis:
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - services=kinesis
+      - AWS_DEFAULT_REGION=eu-north-1
+    volumes:
+      - "./localstack-init/01-create-stream.sh:/etc/localstack/init/ready.d/01-create-stream.sh"
+      - "./localstack-init/99-delete-stream.sh:/etc/localstack/init/shutdown.d/99-delete-stream.sh"
+ backend:
+    image: ${LOCAL_IMAGE_NAME}
+    ports:
+      - "8080:8080"
+    environment:
+      - PREDICTIONS_STREAM_NAME=${PREDICTIONS_STREAM_NAME}
+      - RUN_ID=test123
+      - MODEL_ID=test321
+      - MODEL_LOCATION=/app/model
+      - TEST_RUN=False
+      - KINESIS_ENDPOINT_URL=http://kinesis:4566
+      - AWS_ACCESS_KEY_ID=123 # change the key before u use
+      - AWS_SECRET_ACCESS_KEY=123 # change the key before u use
+      - AWS_DEFAULT_REGION=eu-north-1
+    volumes:
+      - "./model:/app/model"

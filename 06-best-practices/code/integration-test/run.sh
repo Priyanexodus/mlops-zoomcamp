@@ -6,34 +6,30 @@ LOCAL_TAG=`date +"%Y-%m-%d-%H-%M"`
 export LOCAL_IMAGE_NAME="stream-model-duration:${LOCAL_TAG}"
 export PREDICTIONS_STREAM_NAME="ride_predictions"
 
+echo ${LOCAL_IMAGE_NAME}, ${PREDICTIONS_STREAM_NAME}
+
 docker build -t ${LOCAL_IMAGE_NAME} ..
 
 docker-compose up -d
-sleep 1
 
-if ! pipenv run awslocal kinesis describe-stream --stream-name ${PREDICTIONS_STREAM_NAME} >/dev/null 2>&1; then
-    pipenv run awslocal kinesis create-stream \
-        --stream-name ${PREDICTIONS_STREAM_NAME} \
-        --shard-count 1
-    pipenv run awslocal kinesis wait stream-exists --stream-name ${PREDICTIONS_STREAM_NAME}
-fi
-
+sleep 15
 pipenv run python test_docker.py
 
 ERROR_CODE=$?
 if [ ${ERROR_CODE} -ne 0 ]; then
     docker-compose logs
-    docker-compose down
+    docker-compose stop
     exit ${ERROR_CODE}
 fi
 
+sleep 5
 pipenv run python test_kinesis.py
 
 ERROR_CODE=$?
 if [ ${ERROR_CODE} -ne 0 ]; then
     docker-compose logs
-    docker-compose down
+    docker-compose stop
     exit ${ERROR_CODE}
 fi
 
-docker-compose down
+docker-compose stop

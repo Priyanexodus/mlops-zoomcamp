@@ -1,7 +1,3 @@
-import pytest
-
-
-@pytest.fixture
 def expected_prediction() -> dict:
     return {
         "predictions": [
