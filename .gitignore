@@ -185,3 +185,4 @@ Anaconda3-2022.05-Linux-x86_64.sh
 # Ignore specific README files
 04-deployment/streaming/README.md
 06-best-practices/code/README.md
+Makefile
