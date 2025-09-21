@@ -25,3 +25,5 @@ services:
       - AWS_DEFAULT_REGION=eu-north-1
     volumes:
       - "./model:/app/model"
+    depends_on:
+      - kinesis

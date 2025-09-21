@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 
 cd "$(dirname "$0")"
+export LOCAL_IMAGE_NAME=$1
+if [ "${LOCAL_IMAGE_NAME}" == "" ]; then
+    echo "The local image isn't set hence we are buildng the image" 
+    LOCAL_TAG=`date +"%Y-%m-%d-%H-%M"`
+    export LOCAL_IMAGE_NAME="stream-model-duration:${LOCAL_TAG}"
+    docker build -t ${LOCAL_IMAGE_NAME} ..
+else
+    echo "No need to build the docker image ${LOCAL_IMAGE_NAME}"
+fi
 
-LOCAL_TAG=`date +"%Y-%m-%d-%H-%M"`
-export LOCAL_IMAGE_NAME="stream-model-duration:${LOCAL_TAG}"
-export PREDICTIONS_STREAM_NAME="ride_predictions"
-
-echo ${LOCAL_IMAGE_NAME}, ${PREDICTIONS_STREAM_NAME}
-
-docker build -t ${LOCAL_IMAGE_NAME} ..
+ export PREDICTIONS_STREAM_NAME="ride_predictions"
 
 docker-compose up -d
 
