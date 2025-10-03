@@ -27,7 +27,11 @@ jobs:
             
             - name: quality-checks
               working-directory: "06-best-practices/code"
-              run: pipenv run isort . && black . && pylint --recursive=y .
+              run: |
+                pipenv run isort --check-only .
+                pipenv run black --check .
+                pipenv run pylint --recursive=y .
+
 
             - name: run unit test
               working-directory: "06-best-practices/code"
@@ -36,7 +40,7 @@ jobs:
             - name: AWS CREDENTIALS
               uses: aws-actions/configure-aws-credentials@v1
               with:
-                aws-access-key-id: ${{ env.AWS_SECRET_ACCESS_KEY }}
+                aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
                 aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
                 aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
@@ -51,14 +55,14 @@ jobs:
             - name: AWS CREDENTIALS
               uses: aws-actions/configure-aws-credentials@v1
               with:
-                aws-access-key-id: ${{ env.AWS_SECRET_ACCESS_KEY }}
+                aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
                 aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
                 aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
-            - uses: hasicorp/setup-terraform@v2
+            - uses: hashicorp/setup-terraform@v2
             
             - name: TF plan
-             id: plan
-             working-directory: "06-best-practices/infrastructure"
-             run: |
-                terraform init && terraform plan --var-file=vars/prod.tfvars
+              id: plan
+              working-directory: "06-best-practices/infrastructure"
+              run: |
+                terraform init --backend-config="key=mlops-zoomcamp-prod.tfstate" --reconfigure && terraform plan --var-file=vars/prod.tfvars
