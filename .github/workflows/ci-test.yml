@@ -1,0 +1,64 @@
+name: CI-Tests
+on:
+    pull_request:
+        branches:
+            - 'develop'
+        paths:
+            - '06-best-practices/code/**'
+
+env:
+    AWS_DEFAULT_REGION: "eu-north-1"
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set up Python 3.10
+              uses: actions/setup-python@v2
+              with:
+                python-version: 3.10
+            
+            - name: Install dependency
+              working-directory: "06-best-practices/code"
+              run: pip install pipenv && pipenv install --dev
+            
+            - name: quality-checks
+              working-directory: "06-best-practices/code"
+              run: pipenv run isort . && black . && pylint --recursive=y .
+
+            - name: run unit test
+              working-directory: "06-best-practices/code"
+              run: pipenv run pytest tests/
+            
+            - name: AWS CREDENTIALS
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                aws-access-key-id: ${{ env.AWS_SECRET_ACCESS_KEY }}
+                aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+                aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+            - name: run integration test
+              working-directory: "06-best-practices/code/integration-test" 
+              run: |
+                . run.sh
+    Terraform-Plan:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: AWS CREDENTIALS
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                aws-access-key-id: ${{ env.AWS_SECRET_ACCESS_KEY }}
+                aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+                aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+            - uses: hasicorp/setup-terraform@v2
+            
+            - name: TF plan
+             id: plan
+             working-directory: "06-best-practices/infrastructure"
+             run: |
+                terraform init && terraform plan --var-file=vars/prod.tfvars
