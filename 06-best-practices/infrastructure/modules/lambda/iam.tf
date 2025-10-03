@@ -174,7 +174,8 @@ resource "aws_iam_policy" "lambda_ecr_access" {
       "Action": [
         "ecr:GetDownloadUrlForLayer",
         "ecr:BatchGetImage",
-        "ecr:BatchCheckLayerAvailability"
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:DescribeImages"
       ],
       "Resource": "${var.aws_ecr_arn}"
     },

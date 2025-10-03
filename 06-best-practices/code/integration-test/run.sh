@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cd "$(dirname "$0")"
-export LOCAL_IMAGE_NAME=$1
+
 if [ "${LOCAL_IMAGE_NAME}" == "" ]; then
     echo "The local image isn't set hence we are buildng the image" 
     LOCAL_TAG=`date +"%Y-%m-%d-%H-%M"`
